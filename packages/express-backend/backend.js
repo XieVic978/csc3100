@@ -71,8 +71,16 @@ const users = {
   })
 
   const removeUser = (user_id) =>{
-    users.users_list = users.users_list.filter(user => user.id !==user_id)
-  }
+    //users["users_list"] = users["users_list"].filter(user => user.id !==user_id)
+    const index = users["users_list"].findIndex((user) => user.id === user_id);
+
+    if (index !== 1){ //if the userId exists then remove it 
+      users["users_list"].splice(index,1); //(index, #of objects to remove)
+    }
+
+  };
+
+  
 
   app.delete("/users/:id", (req,res) =>{
     const userToDelete = req.params.id;
