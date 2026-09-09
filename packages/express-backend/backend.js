@@ -7,9 +7,6 @@ app.use(express.json());
 app.get("/", (req,res) =>{
     res.send("Hello World!");
 });
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-});
 
 const users = {
     users_list: [
@@ -47,18 +44,6 @@ const users = {
     return users["users_list"].filter((user) => user["name"] === name);
   };
 
-  app.get("/users" , (req,res) =>{
-    const name = req.query.name;
-    if (name != undefined){
-        let result = findUserByName(name);
-        result = {users_list:result};
-        res.send(result);
-    }
-    else{
-        res.send(users);
-    }
-    
-  })
 
   const findUserByID = (id) => {
     return users["users_list"].find((user) => user["id"] === id)
@@ -84,3 +69,42 @@ const users = {
     addUser(userToAdd);
     res.send();
   })
+
+  const removeUser = (user_id) =>{
+    users.users_list = users.users_list.filter(user => user.id !==user_id)
+  }
+
+  app.delete("/users/:id", (req,res) =>{
+    const userToDelete = req.params.id;
+    removeUser(userToDelete);
+    res.send()
+  })
+
+
+  const findAllUsers = (name, job) =>{
+    return users["users_list"].filter((user) => user["name"] === name && user["job"] === job);
+
+  }
+  app.get("/users" , (req,res) =>{
+    const name = req.query.name;
+    const job = req.query.job;
+    if (name !== undefined && job!==undefined){
+        let result = findAllUsers(name,job);
+        result = {users_list:result};
+        res.send(result);
+    }
+    else if(name !== undefined){
+        let result = findUserByName(name);
+        result = {users_list:result};
+        res.send(result);
+    }
+    else{
+        res.send(users);
+    }
+    
+  })
+
+
+  app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});
